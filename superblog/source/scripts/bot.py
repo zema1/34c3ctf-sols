@@ -11,7 +11,7 @@ while True:
     c.execute('SELECT id, url FROM blog_feedback WHERE not visited ORDER BY created_at ASC LIMIT 1')
     feedback = c.fetchone()
 
-    print 'Got feedback: %r' % (feedback,)
+    # print 'Got feedback: %r' % (feedback,)
     if feedback is None:
         time.sleep(1)
         continue
