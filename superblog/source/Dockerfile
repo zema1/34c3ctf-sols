@@ -1,4 +1,4 @@
-FROM ubuntu:17.10
+FROM ubuntu:16.04
 
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install curl zip
@@ -29,7 +29,7 @@ RUN pip2 install 'Django<2' mysqlclient gunicorn requests
 ADD mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
 
 ADD dump.sql /tmp/
-RUN service mysql start && \
+RUN find /var/lib/mysql -type f -exec touch {} \; && service mysql start && \
     mysql -uroot -peSeeM1ooyo < /tmp/dump.sql && \
     rm /tmp/dump.sql
 
@@ -41,7 +41,7 @@ ADD flag2 /asdjkasecretflagfile2
 COPY app /app
 
 ENV DOCKER 1
-RUN service mysql start && \
+RUN find /var/lib/mysql -type f -exec touch {} \; && service mysql start && \
     cd /app && \
     python2 manage.py migrate && \
     python2 manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_user(username='admin', password='eevii0et8em7wei9Tahw', email='')" && \
@@ -55,8 +55,9 @@ RUN chown -R xss-man:xss-man /bot/ && \
 RUN apt-get -y install nginx
 COPY nginx/default /etc/nginx/sites-available/default
 
-CMD service mysql start && service nginx start && \
+CMD find /var/lib/mysql -type f -exec touch {} \; && service mysql start && \
+    service nginx start && \
     cd /app && \
-    (gunicorn -w 32 blog.wsgi --bind 0.0.0.0:1342 & \
+    (gunicorn -w 4 blog.wsgi --bind 0.0.0.0:1342 & \
     su xss-man -c 'python2 /bot/bot.py' & \
     /bin/bash -i)

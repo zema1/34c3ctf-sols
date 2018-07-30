@@ -10,7 +10,7 @@ from login import login
 import threading
 import os
 
-WAIT=2
+WAIT=5
 TIMEOUT=10
 
 urls = ['localhost:1342', '127.0.0.1:1342']
@@ -45,5 +45,6 @@ driver.get(url)
 print("Waiting a bit")
 time.sleep(WAIT)
 print("Fetched url " + url)
+print(driver.title)
 driver.quit()
 exit(0)
